@@ -1,0 +1,7 @@
+# OS / editor cruft — the site itself has no build artifacts to ignore
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/

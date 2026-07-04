@@ -1,0 +1,201 @@
+/* =========================================================================
+   main.js — the index desk: render the feed, search it, filter it by tag.
+   No dependencies. Reads window.JOURNAL_ENTRIES / _MARGINALIA / _SITE.
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  var ENTRIES = window.JOURNAL_ENTRIES || [];
+  var SCRAPS  = window.JOURNAL_MARGINALIA || [];
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var KIND_LABEL  = { story: "Story", journal: "Journal", fragment: "Fragment" };
+  var KIND_ACCENT = { story: "var(--oxblood)", journal: "var(--verdigris)", fragment: "var(--ochre)" };
+  var WEIGHT_CLASS = { feature: "w-feature", wide: "w-wide", tall: "w-tall" };
+
+  // ---- tiny helpers ------------------------------------------------------
+  function el(id){ return document.getElementById(id); }
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+  function fmtDate(iso){
+    var p = String(iso).split("-");
+    if (p.length < 3) return iso;
+    return parseInt(p[2],10) + " " + MONTHS[parseInt(p[1],10)-1] + " " + p[0];
+  }
+  function haystack(e){
+    return (e.title + " " + (e.dek||"") + " " + (e.excerpt||"") + " " +
+            (e.tags||[]).join(" ") + " " + (e.text||"")).toLowerCase();
+  }
+
+  // ---- state -------------------------------------------------------------
+  var state = { q: "", tag: "" };
+
+  // ---- tag index ---------------------------------------------------------
+  function tagCounts(){
+    var m = {};
+    ENTRIES.forEach(function(e){
+      (e.tags||[]).forEach(function(t){ m[t] = (m[t]||0) + 1; });
+    });
+    return Object.keys(m).map(function(t){ return { tag:t, n:m[t] }; })
+      .sort(function(a,b){ return b.n - a.n || a.tag.localeCompare(b.tag); });
+  }
+
+  function renderTagbar(){
+    var bar = el("tagbar");
+    var html = '<span class="filed">Filed under</span>';
+    tagCounts().forEach(function(t){
+      var on = state.tag === t.tag;
+      html += '<a class="tag" href="?tag=' + encodeURIComponent(t.tag) + '" ' +
+              'data-tag="' + esc(t.tag) + '" role="button" aria-pressed="' + on + '">' +
+              esc(t.tag) + '<span class="count">' + t.n + '</span></a>';
+    });
+    bar.innerHTML = html;
+  }
+
+  // ---- filtering ---------------------------------------------------------
+  function filtered(){
+    var terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    return ENTRIES.filter(function(e){
+      if (state.tag && (e.tags||[]).indexOf(state.tag) === -1) return false;
+      if (terms.length){
+        var hay = haystack(e);
+        for (var i=0;i<terms.length;i++){ if (hay.indexOf(terms[i]) === -1) return false; }
+      }
+      return true;
+    });
+  }
+
+  // ---- card markup -------------------------------------------------------
+  function cardHTML(e, i){
+    var wcls = WEIGHT_CLASS[e.weight] || "";
+    var first = (i === 0 && e.weight === "feature") ? " first" : "";
+    var accent = KIND_ACCENT[e.kind] || "var(--oxblood)";
+    var tags = (e.tags||[]).map(function(t){
+      return '<a class="tag" href="?tag=' + encodeURIComponent(t) + '" data-tag="' + esc(t) + '">' + esc(t) + '</a>';
+    }).join("");
+    return '<li class="card reveal ' + wcls + first + '" style="--card-accent:' + accent + '">' +
+      '<span class="kind" data-kind="' + esc(e.kind) + '">' + esc(KIND_LABEL[e.kind]||e.kind) + '</span>' +
+      '<div class="card-date">' + esc(fmtDate(e.date)) + '</div>' +
+      '<h2><a href="' + esc(e.slug) + '">' + esc(e.title) + '</a></h2>' +
+      (e.dek ? '<p class="dek">' + esc(e.dek) + '</p>' : '') +
+      (e.excerpt ? '<p class="excerpt">' + esc(e.excerpt) + '</p>' : '') +
+      '<div class="card-tags">' + tags + '</div>' +
+      (e.marginal ? '<div class="marginal">' + esc(e.marginal) + '</div>' : '') +
+    '</li>';
+  }
+  function scrapHTML(s){
+    return '<li class="scrap reveal' + (s.wide ? ' s-wide' : '') + '">' +
+      esc(s.text) + (s.cite ? '<cite>' + esc(s.cite) + '</cite>' : '') + '</li>';
+  }
+
+  // ---- render ------------------------------------------------------------
+  function render(animate){
+    var list = filtered();
+    var feed = el("feed");
+    var active = !!(state.q || state.tag);
+
+    if (!list.length){
+      feed.innerHTML = '<li class="empty">Nothing on this shelf.' +
+        '<span>Try a different word, or clear the filters.</span></li>';
+    } else {
+      var html = "";
+      // Interleave decorative scraps only when browsing unfiltered.
+      var scrapAt = active ? [] : [2, 5];  // after these card indices
+      var si = 0;
+      list.forEach(function(e, i){
+        html += cardHTML(e, i);
+        if (scrapAt.indexOf(i) !== -1 && SCRAPS[si]) { html += scrapHTML(SCRAPS[si++]); }
+      });
+      feed.innerHTML = html;
+    }
+
+    // result line
+    var rl = el("resultline");
+    if (active){
+      rl.hidden = false;
+      var bits = [];
+      bits.push(list.length + (list.length === 1 ? " entry" : " entries"));
+      if (state.tag) bits.push('filed under #' + state.tag);
+      if (state.q)   bits.push('matching “' + state.q + '”');
+      el("resultsummary").textContent = bits.join(" · ");
+    } else {
+      rl.hidden = true;
+    }
+
+    // reveal choreography
+    var cards = feed.querySelectorAll(".reveal");
+    if (reduceMotion || !animate){
+      cards.forEach(function(c){ c.classList.add("in"); });
+    } else if ("IntersectionObserver" in window){
+      var io = new IntersectionObserver(function(ents){
+        ents.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+      }, { rootMargin: "0px 0px -8% 0px" });
+      cards.forEach(function(c, idx){ c.style.transitionDelay = Math.min(idx*40, 240) + "ms"; io.observe(c); });
+    } else {
+      cards.forEach(function(c){ c.classList.add("in"); });
+    }
+
+    renderTagbar();
+  }
+
+  // ---- url sync ----------------------------------------------------------
+  function readURL(){
+    var p = new URLSearchParams(location.search);
+    state.q   = p.get("q")   || "";
+    state.tag = p.get("tag") || "";
+  }
+  function writeURL(){
+    var p = new URLSearchParams();
+    if (state.q)   p.set("q", state.q);
+    if (state.tag) p.set("tag", state.tag);
+    var qs = p.toString();
+    history.replaceState(null, "", qs ? "?" + qs : location.pathname);
+  }
+
+  // ---- wiring ------------------------------------------------------------
+  function setTag(t){
+    state.tag = (state.tag === t) ? "" : t;
+    writeURL(); render(false);
+    document.querySelector(".apparatus").scrollIntoView({ block: "nearest" });
+  }
+
+  function init(){
+    // header count
+    var c = el("entrycount");
+    if (c) c.textContent = ENTRIES.length + (ENTRIES.length === 1 ? " entry" : " entries");
+
+    readURL();
+    var box = el("search");
+    if (box){
+      box.value = state.q;
+      box.addEventListener("input", function(){
+        state.q = box.value.trim();
+        writeURL(); render(false);
+      });
+    }
+
+    // delegate tag clicks (tag bar + card tags) and clear button
+    document.addEventListener("click", function(ev){
+      var t = ev.target.closest("[data-tag]");
+      if (t){ ev.preventDefault(); setTag(t.getAttribute("data-tag")); return; }
+      if (ev.target.closest("#clearfilters")){
+        ev.preventDefault();
+        state.q = ""; state.tag = "";
+        if (box) box.value = "";
+        writeURL(); render(false);
+      }
+    });
+
+    window.addEventListener("popstate", function(){ readURL(); if (box) box.value = state.q; render(false); });
+
+    render(true);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();

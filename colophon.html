@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colophon · Marginalia</title>
+  <meta name="description" content="How this commonplace book is built — the type, the palette, and how to add your own entries.">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#story">Skip to the colophon</a>
+
+  <div class="ledger">
+    <div class="row">
+      <a class="home" href="index.html"><span class="arrow">←</span> The Index</a>
+      <a class="mark" href="index.html">Marginalia</a>
+    </div>
+  </div>
+
+  <div class="leaf">
+    <article id="story">
+      <p class="eyebrow"><span class="kind-tag">Colophon</span><span class="dot">·</span><span>About this desk</span></p>
+      <h1>A Note on the <em>Making</em></h1>
+      <p class="dek">Every commonplace book should say, at the back, how it was bound. Here is how this one was.</p>
+
+      <div class="prose">
+        <p class="lede">This is a commonplace book kept in public: part anthology of invented stories, part working notebook, part drawer of borrowed sentences. The index page is meant to feel like a writer's desk — layered, a little dense, rewarding a second look. Every entry, by contrast, is a quiet room with a single lamp: one column, comfortable measure, nothing in the way of the words.</p>
+
+        <h2>How it's built</h2>
+        <p>Plain HTML, one stylesheet, and a little vanilla JavaScript — no framework, no build step, no dependencies to rot. Each entry is a real HTML file with its own address, so you can link straight to a story and it will always be there. The homepage reads a small catalog file and renders the feed, the search, and the tag filter from it.</p>
+        <aside class="note">Because there's no build step, you can open <code>index.html</code> straight off your hard drive and it works. Nothing to compile, nothing to serve.</aside>
+
+        <h2>The type</h2>
+        <p>Titles are set in <strong>Fraunces</strong>, a characterful literary serif with a slight wonk to its letterforms — the handwritten feel of a good headline. The body is <strong>Inter</strong>, a clean humanist sans chosen so that reading a long story never tires the eye. Dates, tags, and marginal notes are set in <strong>IBM&nbsp;Plex&nbsp;Mono</strong>, the typewriter voice of the margins.</p>
+
+        <h2>The palette</h2>
+        <p>Four colours, chosen to feel like ink and aged paper rather than a screen:</p>
+        <ul>
+          <li><strong style="color:var(--ink)">Bone</strong> <code>#EDE7DA</code> — the paper.</li>
+          <li><strong style="color:var(--ink)">Ink</strong> <code>#211D26</code> — the words.</li>
+          <li><strong style="color:var(--oxblood)">Oxblood</strong> <code>#7A2E2E</code> — titles and links.</li>
+          <li><strong style="color:var(--verdigris-deep)">Verdigris</strong> <code>#4C7A6F</code> — tags and hover.</li>
+        </ul>
+        <p>A single warm ochre joins them for tiny ornaments — the asterisks between sections, a star on a map. Everything else is a tint or shade of the original four, so the page has depth without ever going off-key.</p>
+
+        <h2>On comfort &amp; motion</h2>
+        <p>The site is responsive to the last hinge of a phone, and it listens for <code>prefers-reduced-motion</code>: if your system asks for stillness, the gentle reveals and hovers simply don't happen, and nothing is lost. Contrast, focus outlines, and a skip link are all in place, because a commonplace book is no use if you can't read it.</p>
+
+        <h2>Adding your own entries</h2>
+        <p>The whole thing is yours to keep writing in. To add a piece: copy any file in the <code>entries</code> folder, write your story into it, and register it at the top of <code>js/entries.js</code> — one small block with a title, date, tags, and a line of searchable text. It will appear on the index, join the search, and slot into the newer/older navigation automatically. Full instructions live in the <code>README</code>.</p>
+
+        <div class="asterism" aria-hidden="true"></div>
+        <p><a class="return" href="index.html">⥂ Return to the index</a></p>
+      </div>
+    </article>
+  </div>
+
+  <footer class="colophon">
+    <div>
+      <h2>Marginalia</h2>
+      A commonplace book of short stories, notebook entries &amp; the small hours in between.
+      <br><a href="index.html">Return to the index →</a>
+    </div>
+    <div>
+      <h2>Palette</h2>
+      <div class="swatches" aria-hidden="true">
+        <i style="background:#EDE7DA" title="Bone"></i>
+        <i style="background:#211D26" title="Ink"></i>
+        <i style="background:#7A2E2E" title="Oxblood"></i>
+        <i style="background:#4C7A6F" title="Verdigris"></i>
+      </div>
+      Bone · Ink · Oxblood · Verdigris
+    </div>
+    <div class="to-top">
+      <a href="#top" onclick="scrollTo({top:0});return false;">↑ Back to the top</a>
+    </div>
+  </footer>
+</body>
+</html>

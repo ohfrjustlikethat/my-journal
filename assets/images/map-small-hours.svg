@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" role="img"
+     aria-label="A hand-drawn nocturnal map: contour lines, a coastline, a compass rose and scattered stars.">
+  <defs>
+    <radialGradient id="glow" cx="62%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#4C7A6F" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#4C7A6F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="520" fill="#EDE7DA"/>
+  <rect width="800" height="520" fill="url(#glow)"/>
+
+  <!-- contour lines of the small-hours interior -->
+  <g fill="none" stroke="#4C7A6F" stroke-opacity="0.55" stroke-width="1.4">
+    <path d="M120 300 C 210 210 360 200 470 250 C 560 292 610 250 660 300"/>
+    <path d="M95 330 C 205 225 375 218 495 272 C 585 314 630 268 690 318"/>
+    <path d="M75 362 C 200 244 392 238 520 296 C 612 338 652 288 720 336"/>
+    <path d="M60 398 C 198 268 408 262 545 322 C 640 364 676 312 748 360"/>
+  </g>
+
+  <!-- the coastline -->
+  <path d="M40 150 C 160 120 210 190 300 175 C 380 162 420 96 520 118
+           C 610 138 640 92 760 120"
+        fill="none" stroke="#211D26" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M40 150 C 160 120 210 190 300 175 C 380 162 420 96 520 118
+           C 610 138 640 92 760 120 L 760 60 L 40 60 Z"
+        fill="#211D26" fill-opacity="0.05"/>
+
+  <!-- a dashed route through the night -->
+  <path d="M180 430 C 300 380 300 300 430 300 C 540 300 560 210 640 190"
+        fill="none" stroke="#7A2E2E" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/>
+  <circle cx="180" cy="430" r="5" fill="#7A2E2E"/>
+  <circle cx="640" cy="190" r="5" fill="#7A2E2E" stroke="#EDE7DA" stroke-width="2"/>
+
+  <!-- compass rose -->
+  <g transform="translate(688 402)">
+    <circle r="46" fill="none" stroke="#211D26" stroke-opacity="0.35" stroke-width="1"/>
+    <circle r="34" fill="none" stroke="#211D26" stroke-opacity="0.25" stroke-width="1"/>
+    <path d="M0 -46 L 9 -8 L 0 0 L -9 -8 Z" fill="#7A2E2E"/>
+    <path d="M0 46 L 9 8 L 0 0 L -9 8 Z" fill="#211D26"/>
+    <path d="M46 0 L 8 9 L 0 0 L 8 -9 Z" fill="#211D26"/>
+    <path d="M-46 0 L -8 9 L 0 0 L -8 -9 Z" fill="#211D26"/>
+    <text x="0" y="-52" font-family="'IBM Plex Mono',monospace" font-size="13" fill="#7A2E2E"
+          text-anchor="middle">N</text>
+  </g>
+
+  <!-- stars -->
+  <g fill="#B4863C">
+    <circle cx="120" cy="95" r="2.2"/><circle cx="250" cy="70" r="1.6"/>
+    <circle cx="470" cy="60" r="2.6"/><circle cx="600" cy="88" r="1.8"/>
+    <circle cx="710" cy="150" r="2"/><circle cx="90" cy="200" r="1.6"/>
+    <circle cx="560" cy="150" r="1.5"/>
+  </g>
+
+  <text x="46" y="486" font-family="'IBM Plex Mono',monospace" font-size="15" letter-spacing="3"
+        fill="#211D26" fill-opacity="0.6">THE COUNTRY OF SMALL HOURS · 03:00–04:00</text>
+</svg>
