@@ -1,6 +1,6 @@
 /* =========================================================================
    main.js — the index desk: render the feed, search it, filter it by tag.
-   No dependencies. Reads window.JOURNAL_ENTRIES / _MARGINALIA / _SITE.
+   No dependencies. Reads window.JOURNAL_ENTRIES and JOURNAL_MARGINALIA.
    ========================================================================= */
 (function () {
   "use strict";
@@ -47,8 +47,10 @@
 
   function renderTagbar(){
     var bar = el("tagbar");
-    var html = '<span class="filed">Filed under</span>';
-    tagCounts().forEach(function(t){
+    var counts = tagCounts();
+    if (!counts.length){ bar.innerHTML = ""; return; }
+    var html = '<span class="filed">Tags</span>';
+    counts.forEach(function(t){
       var on = state.tag === t.tag;
       html += '<a class="tag" href="?tag=' + encodeURIComponent(t.tag) + '" ' +
               'data-tag="' + esc(t.tag) + '" role="button" aria-pressed="' + on + '">' +
@@ -100,8 +102,8 @@
     var active = !!(state.q || state.tag);
 
     if (!list.length){
-      feed.innerHTML = '<li class="empty">Nothing on this shelf.' +
-        '<span>Try a different word, or clear the filters.</span></li>';
+      var msg = ENTRIES.length ? "No matching entries." : "No entries yet.";
+      feed.innerHTML = '<li class="empty">' + msg + '</li>';
     } else {
       var html = "";
       // Interleave decorative scraps only when browsing unfiltered.
@@ -118,11 +120,7 @@
     var rl = el("resultline");
     if (active){
       rl.hidden = false;
-      var bits = [];
-      bits.push(list.length + (list.length === 1 ? " entry" : " entries"));
-      if (state.tag) bits.push('filed under #' + state.tag);
-      if (state.q)   bits.push('matching “' + state.q + '”');
-      el("resultsummary").textContent = bits.join(" · ");
+      el("resultsummary").textContent = list.length + (list.length === 1 ? " entry" : " entries");
     } else {
       rl.hidden = true;
     }
@@ -165,9 +163,9 @@
   }
 
   function init(){
-    // header count
-    var c = el("entrycount");
-    if (c) c.textContent = ENTRIES.length + (ENTRIES.length === 1 ? " entry" : " entries");
+    // Hide the search / tags apparatus until there's at least one entry.
+    var app = el("apparatus");
+    if (app) app.hidden = ENTRIES.length === 0;
 
     readURL();
     var box = el("search");

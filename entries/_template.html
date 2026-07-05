@@ -1,0 +1,79 @@
+<!doctype html>
+<!-- TEMPLATE. Copy this file to entries/your-slug.html, fill in the brackets,
+     then register the entry at the top of js/entries.js. Delete these comments
+     as you go. Placeholders are in [ brackets ]. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[ title ] · angry sheep</title>
+  <meta name="description" content="[ optional one-line description ]">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#story">Skip to entry</a>
+
+  <!-- persistent way home, on every entry page -->
+  <div class="ledger">
+    <div class="row">
+      <a class="home" href="../index.html"><span class="arrow">←</span> The Index</a>
+      <a class="mark" href="../index.html">angry sheep</a>
+    </div>
+  </div>
+
+  <div class="leaf">
+    <article id="story">
+      <p class="eyebrow">
+        <span class="kind-tag">Story</span><span class="dot">·</span>
+        <span>[ 2026-01-01 ]</span><span class="dot">·</span>
+        <span>[ N ] min read</span>
+      </p>
+      <h1>[ title ]</h1>
+      <!-- optional subtitle: <p class="dek">[ one line ]</p> -->
+      <p class="byline">
+        <a class="tag" href="../index.html?tag=example">example</a>
+      </p>
+
+      <div class="prose">
+        <p class="lede">[ first paragraph — this one gets the drop cap ]</p>
+
+        <p>[ more paragraphs ]</p>
+
+        <!-- Optional building blocks — uncomment and use as needed:
+
+        <aside class="note">[ a margin note; floats into the gutter on wide screens ]</aside>
+
+        <figure>
+          <img src="../assets/images/your-image.jpg" alt="[ describe the image ]">
+          <figcaption>[ optional caption ]</figcaption>
+        </figure>
+
+        <p class="pullquote">[ a pulled quote ]</p>
+
+        <blockquote>[ a block quotation ]</blockquote>
+
+        <div class="asterism" aria-hidden="true"></div>  scene break
+        -->
+      </div>
+
+      <!-- filed-under + newer/older + return, injected by entry.js once this
+           file is registered in js/entries.js -->
+      <div class="endmatter" id="endmatter"></div>
+    </article>
+  </div>
+
+  <footer class="colophon">
+    <div class="to-top">
+      <a href="#top" onclick="scrollTo({top:0});return false;">↑ Top</a>
+    </div>
+  </footer>
+
+  <script src="../js/entries.js"></script>
+  <script src="../js/entry.js"></script>
+</body>
+</html>

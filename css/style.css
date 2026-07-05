@@ -1,5 +1,5 @@
 /* =========================================================================
-   MARGINALIA — a commonplace book
+   angry sheep — journal
    -------------------------------------------------------------------------
    One stylesheet, two moods:
      · the INDEX (homepage) is a writer's desk — layered, asymmetric, dense.
@@ -77,7 +77,7 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: .5;
+  opacity: .4;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
@@ -114,8 +114,8 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 .skip-link:focus { top: 0.5rem; color: var(--bone); }
 
 /* A reusable ornament */
-.asterism { text-align: center; color: var(--ochre); font-size: 1.4rem; letter-spacing: .5em;
-  padding-left: .5em; margin: 2.2rem 0; user-select: none; }
+.asterism { text-align: center; color: var(--ink-faint); font-size: 1.05rem; letter-spacing: .4em;
+  padding-left: .4em; margin: 1.8rem 0; user-select: none; }
 .asterism::before { content: "\2042"; } /* ⁂ */
 
 /* =========================================================================
@@ -159,28 +159,10 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   color: var(--oxblood);
   font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
 }
-/* a hand-inked rule under the wordmark */
-.wordmark-rule { width: min(100%, 34rem); height: 14px; margin-top: .35rem; color: var(--oxblood); overflow: visible; }
-
 .tagline {
   font-family: var(--serif); font-style: italic;
   font-size: clamp(1.05rem, 1rem + 0.8vw, 1.5rem);
-  color: var(--ink-soft); margin-top: 1rem; max-width: 40ch;
-}
-
-/* The masthead epigraph sits in the right gutter on wide screens like a note
-   scribbled in the margin. */
-.epigraph {
-  font-family: var(--mono); font-size: .78rem; line-height: 1.7;
-  color: var(--verdigris-deep); border-left: 2px solid var(--verdigris);
-  padding-left: .9rem; max-width: 34ch; margin-top: 1.4rem;
-}
-.epigraph b { color: var(--oxblood); font-weight: 600; }
-
-@media (min-width: 60rem) {
-  .masthead { display: grid; grid-template-columns: 1fr 20rem; column-gap: 2rem; align-items: end; }
-  .masthead .dateline { grid-column: 1 / -1; }
-  .epigraph { margin-top: 0; align-self: end; transform: rotate(-0.6deg); }
+  color: var(--ink-soft); margin-top: 1rem; max-width: 44ch;
 }
 
 /* ---- The search + tag apparatus (a card catalog) ------------------------ */
@@ -188,6 +170,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   margin: clamp(1.8rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2.4rem);
   display: grid; gap: 1.4rem;
 }
+.apparatus[hidden] { display: none; }
 
 .searchwell { position: relative; max-width: 34rem; }
 .searchwell label {
@@ -202,10 +185,6 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 }
 .searchwell input::placeholder { color: var(--ink-faint); opacity: .7; }
 .searchwell input:focus { outline: none; border-bottom-color: var(--verdigris); }
-.searchwell::after { /* a small nib */
-  content: "\270E"; position: absolute; right: .3rem; bottom: .35rem;
-  color: var(--verdigris); font-size: 1.1rem; pointer-events: none;
-}
 
 .tagbar { display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem; }
 .tagbar .filed {
@@ -263,18 +242,11 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   box-shadow: var(--shadow-card);
   overflow-wrap: break-word;
 }
-/* a torn/inked top edge accent */
-.card::before {
-  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px;
-  background: var(--card-accent, var(--oxblood));
-  border-radius: 3px 3px 0 0; opacity: .85;
-}
 
 .card .kind {
   position: absolute; top: -0.7rem; right: 1rem;
   font-family: var(--mono); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
   background: var(--ink); color: var(--bone); padding: .28em .6em; border-radius: 2px;
-  transform: rotate(2deg);
 }
 .card .kind[data-kind="journal"] { background: var(--verdigris-deep); }
 .card .kind[data-kind="story"]   { background: var(--oxblood); }
@@ -307,9 +279,8 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   line-height: 1.5; margin-top: .9rem; padding-top: .7rem;
   border-top: 1px dashed var(--edge); position: relative; z-index: 2;
 }
-.card .marginal::before { content: "\261E\00a0"; color: var(--ochre); } /* ☞ */
 
-/* Non-entry "marginalia" cards: little collected quotes that thicken the desk */
+/* Optional non-entry quote cards, pinned between entries (data in entries.js). */
 .scrap {
   grid-column: span 6;
   align-self: stretch;
@@ -319,11 +290,6 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   border-radius: 3px; padding: 1.3rem 1.2rem;
   font-size: 1.05rem; line-height: 1.5; position: relative;
 }
-.scrap::before {
-  content: "\275D"; font-family: var(--serif); font-style: normal;
-  position: absolute; top: -.2rem; left: .5rem; font-size: 2.4rem;
-  color: var(--verdigris); opacity: .35;
-}
 .scrap cite {
   display: block; margin-top: .7rem; font-style: normal;
   font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
@@ -331,8 +297,8 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 }
 
 .feed .empty {
-  grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;
-  font-family: var(--serif); font-style: italic; font-size: 1.3rem; color: var(--ink-soft);
+  grid-column: 1 / -1; text-align: left; padding: 1.5rem 0;
+  font-family: var(--mono); font-size: .8rem; letter-spacing: .04em; color: var(--ink-faint);
 }
 .feed .empty span { display:block; font-family: var(--mono); font-style: normal;
   font-size: .74rem; letter-spacing: .1em; color: var(--ink-faint); margin-top: .6rem; }
@@ -348,11 +314,6 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   .card.w-feature h2 { font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); }
   .card.w-feature .excerpt { max-width: 52ch; }
   .scrap.s-wide { grid-column: span 4; }
-
-  .card:nth-child(6n+1) { transform: rotate(-0.5deg); }
-  .card:nth-child(6n+4) { transform: rotate(0.55deg); }
-  .scrap:nth-child(odd) { transform: rotate(0.7deg); }
-  .scrap:nth-child(even){ transform: rotate(-0.8deg); }
 }
 @media (min-width: 64rem) {
   .card.w-feature { grid-column: span 4; }
@@ -445,8 +406,6 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
   color: var(--oxblood); font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 144;
 }
 .leaf .prose > p.lede { text-indent: 0; }
-/* small-caps opening on the lede for a "letterpress" first line */
-.leaf .prose > p.lede::first-line { font-variant-caps: small-caps; letter-spacing: .02em; }
 
 .leaf .prose h2 {
   font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); margin: 2rem 0 .6rem; color: var(--oxblood-deep);
@@ -507,7 +466,6 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
     margin: .25em calc(-1 * (var(--note-col) + var(--note-gap))) 1rem 0;
     border-left: none; padding-left: 0;
     color: var(--ink-soft); border-top: 1px solid var(--edge); padding-top: .5rem;
-    transform: rotate(-0.5deg);
   }
   .leaf .prose .note::before { content: "\2014 "; color: var(--verdigris); }
   /* let deliberately-wide media bleed into the gutter */

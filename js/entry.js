@@ -21,7 +21,7 @@
   var newer = ENTRIES[i-1]; // array is newest-first
   var older = ENTRIES[i+1];
 
-  if (document.title === "" || /^\s*$/.test(document.title)) document.title = e.title + " · Marginalia";
+  if (document.title === "" || /^\s*$/.test(document.title)) document.title = e.title + " · angry sheep";
 
   var tags = (e.tags||[]).map(function(t){
     return '<a class="tag" href="../index.html?tag=' + encodeURIComponent(t) + '">' + esc(t) + '</a>';
@@ -34,11 +34,11 @@
   }
 
   mount.innerHTML =
-    '<p class="filed-under">Filed under</p>' +
+    '<p class="filed-under">Tags</p>' +
     '<div class="filed-tags">' + tags + '</div>' +
     '<nav class="shelfnav" aria-label="More entries">' +
       nav(newer, "← Newer", "prev") +
       nav(older, "Older →", "next") +
     '</nav>' +
-    '<a class="return" href="../index.html">⥂ Return to the index</a>';
+    '<a class="return" href="../index.html">← Return to the index</a>';
 })();

@@ -3,18 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Marginalia — a commonplace book of stories & small hours</title>
-  <meta name="description" content="A personal web journal: short stories, notebook entries, and marginalia. A commonplace book kept in public.">
+  <title>angry sheep</title>
+  <meta name="description" content="journal of short stories that i thought of in between/during experiences">
   <meta name="color-scheme" content="light">
 
-  <!-- Open Graph / social -->
-  <meta property="og:title" content="Marginalia — a commonplace book">
-  <meta property="og:description" content="Short stories, notebook entries, and marginalia. A commonplace book kept in public.">
+  <meta property="og:title" content="angry sheep">
+  <meta property="og:description" content="journal of short stories that i thought of in between/during experiences">
   <meta property="og:type" content="website">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
-  <!-- Type: characterful serif, humanist sans, a monospace for the metadata -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap">
@@ -22,39 +20,19 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <a class="skip-link" href="#feed">Skip to the entries</a>
+  <a class="skip-link" href="#feed">Skip to entries</a>
 
   <div class="site">
-    <!-- ===================== MASTHEAD ===================== -->
     <header class="masthead">
-      <div class="dateline">
-        <span>Vol. I · A Commonplace Book</span>
-        <span class="center">⁘</span>
-        <span>Est. MMXXVI · <span id="entrycount">—</span></span>
-      </div>
-
-      <div class="nameplate">
-        <h1 class="wordmark">Marginalia</h1>
-        <svg class="wordmark-rule" viewBox="0 0 600 14" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M3 8 C 90 2 170 12 250 7 S 430 2 520 9 S 588 6 597 7"
-                fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-        <p class="tagline">A commonplace book of short stories, notebook entries &amp; the small hours in between.</p>
-      </div>
-
-      <aside class="epigraph">
-        <b>A note to the visitor.</b> This is a desk, not a shop window — layered
-        on purpose. Wander. But every story has a quiet room of its own: click a
-        title and the clutter falls away.
-      </aside>
+      <h1 class="wordmark">angry sheep</h1>
+      <p class="tagline">journal of short stories that i thought of in between/during experiences</p>
     </header>
 
-    <!-- ===================== THE APPARATUS (search + tags) ===================== -->
-    <section class="apparatus" aria-label="Search and browse">
+    <section class="apparatus" aria-label="Search and browse" id="apparatus">
       <div class="searchwell">
-        <label for="search">Search the stacks</label>
+        <label for="search">Search</label>
         <input id="search" type="search" autocomplete="off" spellcheck="false"
-               placeholder="a word, a mood, a title…" aria-describedby="resultsummary">
+               placeholder="Search…" aria-describedby="resultsummary">
       </div>
 
       <nav class="tagbar" id="tagbar" aria-label="Filter by tag">
@@ -67,54 +45,24 @@
       </p>
     </section>
 
-    <div class="asterism" aria-hidden="true"></div>
-
-    <!-- ===================== THE FEED ===================== -->
     <main>
       <h2 class="sr-only">Entries</h2>
-      <ul class="feed" id="feed">
+      <ul class="feed" id="feed" aria-live="polite">
         <!-- cards injected by main.js -->
       </ul>
 
-      <!-- Fallback for no-JS / crawlers / link previews. Search + tag filtering
-           need JS, but the entries themselves are always reachable. If you add
-           an entry and want it listed here too, add a line below. -->
+      <!-- No-JS / crawler fallback. Search + tag filtering need JS, but entries
+           stay reachable. When you add an entry, add a <li><a href="…">…</a></li>
+           line inside this <noscript> if you want it listed here too. -->
       <noscript>
-        <ul class="feed" style="display:block">
-          <li><a href="entries/the-cartographer-of-small-hours.html">The Cartographer of Small Hours</a> — story, 14 Jun 2026</li>
-          <li><a href="entries/notes-toward-a-theory-of-doorways.html">Notes Toward a Theory of Doorways</a> — journal, 28 May 2026</li>
-          <li><a href="entries/salt.html">Salt</a> — story, 09 May 2026</li>
-          <li><a href="entries/on-keeping-a-commonplace-book.html">On Keeping a Commonplace Book</a> — journal, 22 Apr 2026</li>
-          <li><a href="entries/the-lending-library-of-forgotten-errands.html">The Lending Library of Forgotten Errands</a> — story, 03 Apr 2026</li>
-          <li><a href="entries/weather-report-from-the-interior.html">Weather Report from the Interior</a> — journal, 15 Mar 2026</li>
-          <li><a href="entries/marginalia-collected.html">Marginalia, Collected</a> — fragment, 27 Feb 2026</li>
-        </ul>
+        <ul class="feed" style="display:block"></ul>
       </noscript>
     </main>
   </div>
 
-  <!-- ===================== COLOPHON ===================== -->
   <footer class="colophon">
-    <div>
-      <h2>Colophon</h2>
-      Set in <a href="https://fonts.google.com/specimen/Fraunces">Fraunces</a>,
-      <a href="https://fonts.google.com/specimen/Inter">Inter</a> &amp;
-      <a href="https://fonts.google.com/specimen/IBM+Plex+Mono">IBM&nbsp;Plex&nbsp;Mono</a>.
-      Hand-built in plain HTML, CSS &amp; a little JavaScript — no frameworks, no build step.
-      <br>Read the story of the desk itself on the <a href="colophon.html">colophon page</a>.
-    </div>
-    <div>
-      <h2>Palette</h2>
-      <div class="swatches" aria-hidden="true">
-        <i style="background:#EDE7DA" title="Bone"></i>
-        <i style="background:#211D26" title="Ink"></i>
-        <i style="background:#7A2E2E" title="Oxblood"></i>
-        <i style="background:#4C7A6F" title="Verdigris"></i>
-      </div>
-      Bone · Ink · Oxblood · Verdigris
-    </div>
     <div class="to-top">
-      <a href="#top" onclick="scrollTo({top:0});return false;">↑ Back to the top</a>
+      <a href="#top" onclick="scrollTo({top:0});return false;">↑ Top</a>
     </div>
   </footer>
 
