@@ -5,7 +5,7 @@ static website. No frameworks and no build step: HTML, one stylesheet, and a
 little vanilla JavaScript. It runs anywhere you can serve (or just open) a
 folder of files.
 
-The site currently has **no entries** — it's ready for your writing.
+Add writing by registering it in one file; the index builds itself from there.
 
 ---
 
@@ -48,35 +48,33 @@ python -m http.server 8080   # then open http://localhost:8080
      slug: "entries/your-slug.html",
      title: "Your Title",
      date: "2026-07-05",          // YYYY-MM-DD
-     kind: "story",               // "story" | "journal" | "fragment"
-     weight: null,                // "feature" | "wide" | "tall" | null (card size)
+     type: "story",               // free label: story, review, opinion, fragment, …
      tags: ["night"],
      dek: "",                     // optional one-line subtitle
-     excerpt: "",                 // shown on the homepage card
+     excerpt: "",                 // optional preview shown on the index
      text: ""                     // plain text, used for full-text search
    }
    ```
 
-Once registered, the entry appears on the homepage, joins the search, becomes
+   The `type` word is shown next to the entry on the index and on its own page.
+   Set the same word in the entry file's `<span id="entrytype">…</span>`.
+
+Once registered, the entry appears on the index, joins the search, becomes
 filterable by its tags, and slots into the newer/older navigation. The search
 box and tag list stay hidden until there is at least one entry.
 
 ### Blocks you can use inside an entry
 
-- `<p class="lede">` — first paragraph; gets the drop cap.
-- `<aside class="note">` — a margin note (floats into the gutter on wide
-  screens, becomes an inset aside on mobile).
-- `<p class="pullquote">` (add `full` to bleed wider) — a pulled quote.
-- `<figure><img src="../assets/images/…" alt="…"><figcaption>…</figcaption></figure>`
-  — an embedded image with a caption.
+- `<aside class="note">` — a quiet margin note.
+- `<p class="pullquote">` — a pulled quote.
 - `<blockquote>`, `<h2>`, `<h3>`, lists, `<code>` — all styled to match.
-- `<div class="asterism"></div>` — a small scene break.
 
 ## Design
 
 - **Palette:** Bone `#EDE7DA`, Ink `#211D26`, Oxblood `#7A2E2E`, Verdigris
   `#4C7A6F` — defined as CSS variables at the top of `css/style.css`.
-- **Type:** Fraunces (titles), Inter (body), IBM Plex Mono (metadata).
+- **Type:** Fraunces (titles), Inter (reading), IBM Plex Mono (the apparatus —
+  dates, types, tags, search).
 - Mobile-first and responsive, with a skip link, visible focus rings, and full
   `prefers-reduced-motion` support.
 

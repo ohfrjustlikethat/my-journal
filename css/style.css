@@ -1,34 +1,33 @@
 /* =========================================================================
    angry sheep — journal
    -------------------------------------------------------------------------
-   One stylesheet, two moods:
-     · the INDEX (homepage) is a writer's desk — layered, asymmetric, dense.
-     · the LEAF (an entry) is a reading room — quiet, single-column, clear.
-   Everything that adds "clutter" is gated so it never touches the reading
-   measure of an actual story.
+   A bare index of writing, and the pages it points to. The apparatus
+   (dates, types, tags, search) is set in a cold monospace and stated like a
+   catalogue record; the names of the writing are set in a serif; the writing
+   itself is plain. Nothing is meant to call attention to itself — where a
+   plainer choice was available, it was taken.
    ========================================================================= */
 
 /* ---- 1. Tokens ---------------------------------------------------------- */
 :root {
-  /* Foundation palette (given) */
+  /* Foundation palette (given — do not alter) */
   --bone:      #EDE7DA;
   --ink:       #211D26;
   --oxblood:   #7A2E2E;
   --verdigris: #4C7A6F;
 
-  /* Tints & shades, derived from the four — a slightly extended range so the
+  /* Tints & shades, derived from the four — a small extended range so the
      page has depth without introducing a foreign hue. */
-  --bone-hi:   #F6F1E6;  /* raised paper: cards, insets            */
-  --bone-lo:   #E3DBC9;  /* sunk paper: ruled lines, wells         */
-  --edge:      #D2C8B3;  /* hairline borders                       */
+  --bone-hi:   #F6F1E6;  /* raised paper                            */
+  --bone-lo:   #E3DBC9;  /* sunk paper: code, wells                 */
+  --edge:      #D2C8B3;  /* hairline borders                        */
   --ink-soft:  #4C4750;  /* secondary text                         */
-  --ink-faint: #7C7680;  /* tertiary / metadata                    */
+  --ink-faint: #7C7680;  /* tertiary / metadata                     */
   --oxblood-deep: #5C2020;
   --oxblood-soft: #9C4B45;
   --verdigris-deep: #37564E; /* AA-safe teal for small type        */
   --verdigris-tint: #4c7a6f26;
-  --ochre:     #B4863C;  /* the one extension: an illuminated gold,
-                            used only for tiny ornaments            */
+  --ochre:     #B4863C;
 
   /* Type */
   --serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
@@ -36,15 +35,12 @@
   --mono:  "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Consolas", monospace;
 
   /* Measure & rhythm */
-  --measure: 60ch;        /* comfortable reading column            */
+  --column:  46rem;       /* the single quiet column               */
+  --measure: 62ch;        /* protected reading measure for prose   */
   --leading: 1.72;
-  --gap: clamp(1rem, 2.5vw, 2rem);
-  --page-pad: clamp(1.1rem, 4vw, 3.25rem);
+  --page-pad: clamp(1.25rem, 6vw, 3rem);
 
-  --shadow-card: 0 1px 0 rgba(33,29,38,.04),
-                 0 12px 24px -18px rgba(33,29,38,.5);
   --focus: 2px solid var(--verdigris);
-
   color-scheme: light;
 }
 
@@ -58,31 +54,15 @@ body {
   background-color: var(--bone);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: clamp(1rem, 0.94rem + 0.3vw, 1.125rem);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.06rem);
   line-height: var(--leading);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
   overflow-wrap: break-word;
 }
-
-/* The paper grain: a single static SVG turbulence, multiplied over the page.
-   It is static (no animation) so prefers-reduced-motion has nothing to undo. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: .4;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-}
-/* keep real content above the grain */
-body > * { position: relative; z-index: 1; }
 
 img { max-width: 100%; height: auto; display: block; }
 
@@ -95,10 +75,9 @@ a {
 a:hover { color: var(--verdigris-deep); text-decoration-color: var(--verdigris); }
 
 :focus-visible { outline: var(--focus); outline-offset: 3px; border-radius: 2px; }
-
 ::selection { background: color-mix(in srgb, var(--verdigris) 30%, var(--bone)); }
 
-h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08; color: var(--oxblood); }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.1; color: var(--ink); }
 
 /* Accessibility helpers */
 .sr-only {
@@ -113,95 +92,77 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 }
 .skip-link:focus { top: 0.5rem; color: var(--bone); }
 
-/* A reusable ornament */
-.asterism { text-align: center; color: var(--ink-faint); font-size: 1.05rem; letter-spacing: .4em;
-  padding-left: .4em; margin: 1.8rem 0; user-select: none; }
-.asterism::before { content: "\2042"; } /* ⁂ */
-
 /* =========================================================================
-   3. THE INDEX  (homepage) — the writer's desk
+   3. THE INDEX (homepage)
    ========================================================================= */
 .site {
-  max-width: 78rem;
+  max-width: var(--column);
   margin-inline: auto;
-  padding: clamp(1rem, 3vw, 2rem) var(--page-pad) 4rem;
+  padding: clamp(2.5rem, 8vw, 5rem) var(--page-pad) 4rem;
 }
 
 /* ---- Masthead ----------------------------------------------------------- */
-.masthead { position: relative; padding-top: 1rem; }
-
-.dateline {
-  display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; justify-content: space-between;
-  font-family: var(--mono); font-size: .72rem; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--ink-faint);
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
-  padding: .5rem .1rem; margin-bottom: clamp(1.4rem, 4vw, 2.6rem);
-}
-.dateline span { white-space: nowrap; }
-.dateline .center { color: var(--oxblood); }
+.masthead { margin-bottom: clamp(2.5rem, 7vw, 4rem); }
 
 .wordmark {
   font-family: var(--serif);
   font-optical-sizing: auto;
-  font-weight: 600;
-  /* Fraunces "wonk/soft" axes give the characterful, slightly-off letterforms */
-  font-variation-settings: "SOFT" 30, "WONK" 1, "opsz" 144;
-  font-size: clamp(2.6rem, 12.5vw, 8.5rem);
-  line-height: 0.86;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-variation-settings: "opsz" 40;
+  font-size: clamp(1.9rem, 1.5rem + 1.7vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
   color: var(--ink);
-  margin: 0;
-  position: relative;
 }
-.wordmark em {
-  font-style: italic;
-  color: var(--oxblood);
-  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144;
-}
-.tagline {
-  font-family: var(--serif); font-style: italic;
-  font-size: clamp(1.05rem, 1rem + 0.8vw, 1.5rem);
-  color: var(--ink-soft); margin-top: 1rem; max-width: 44ch;
+.wordmark em { font-style: italic; color: var(--oxblood); }
+
+/* The description — stated flatly, like a record line, not a tagline. */
+.subhead {
+  font-family: var(--mono);
+  font-size: .78rem;
+  line-height: 1.7;
+  letter-spacing: .01em;
+  color: var(--ink-faint);
+  margin-top: 1.1rem;
+  max-width: 54ch;
 }
 
-/* ---- The search + tag apparatus (a card catalog) ------------------------ */
+/* ---- Search + tags apparatus ------------------------------------------- */
 .apparatus {
-  margin: clamp(1.8rem, 5vw, 3rem) 0 clamp(1.5rem, 4vw, 2.4rem);
-  display: grid; gap: 1.4rem;
+  margin-bottom: clamp(2.5rem, 7vw, 4rem);
+  display: grid; gap: 1.5rem;
 }
 .apparatus[hidden] { display: none; }
 
-.searchwell { position: relative; max-width: 34rem; }
+.searchwell { max-width: 30rem; }
 .searchwell label {
   display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--ink-faint); margin-bottom: .4rem;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: .5rem;
 }
 .searchwell input {
-  width: 100%; font-family: var(--serif); font-size: 1.35rem; font-style: italic;
-  color: var(--ink); background: transparent; border: none;
-  border-bottom: 2px solid var(--ink); padding: .3rem 2rem .45rem .1rem;
-  border-radius: 0;
+  width: 100%; font-family: var(--sans); font-size: 1rem; color: var(--ink);
+  background: transparent; border: none; border-bottom: 1px solid var(--ink);
+  padding: .35rem .1rem .5rem; border-radius: 0;
 }
-.searchwell input::placeholder { color: var(--ink-faint); opacity: .7; }
+.searchwell input::placeholder { color: var(--ink-faint); }
 .searchwell input:focus { outline: none; border-bottom-color: var(--verdigris); }
 
-.tagbar { display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem; }
+.tagbar { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
 .tagbar .filed {
   font-family: var(--mono); font-size: .68rem; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--ink-faint); margin-right: .3rem;
+  text-transform: uppercase; color: var(--ink-faint); margin-right: .4rem;
 }
 
-/* A tag "stamp" — used in the tag bar, on cards, and on entry pages */
+/* A tag — a small catalogue mark; used in the tag bar, on entries, on pages */
 .tag {
-  font-family: var(--mono); font-size: .74rem; letter-spacing: .02em;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .02em;
   color: var(--verdigris-deep); background: var(--verdigris-tint);
-  border: 1px solid color-mix(in srgb, var(--verdigris) 40%, transparent);
-  padding: .18em .6em .24em; border-radius: 2px;
+  border: 1px solid color-mix(in srgb, var(--verdigris) 30%, transparent);
+  padding: .16em .55em .2em; border-radius: 2px;
   text-decoration: none; cursor: pointer; white-space: nowrap;
-  line-height: 1.3; display: inline-flex; align-items: center; gap: .35em;
+  line-height: 1.3; display: inline-flex; align-items: center; gap: .3em;
 }
-.tag::before { content: "#"; color: var(--verdigris); opacity: .7; }
+.tag::before { content: "#"; color: var(--verdigris); opacity: .6; }
 .tag .count { color: var(--ink-faint); font-size: .85em; }
 .tag[aria-pressed="true"] {
   background: var(--verdigris); color: var(--bone-hi); border-color: var(--verdigris-deep);
@@ -209,153 +170,85 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 .tag[aria-pressed="true"]::before { color: var(--bone-hi); opacity: .8; }
 
 .resultline {
-  font-family: var(--mono); font-size: .74rem; letter-spacing: .06em;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .06em;
   color: var(--ink-faint); display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
 }
+.resultline[hidden] { display: none; }
 .resultline button.clear {
-  font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em;
+  font-family: var(--mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .1em;
   color: var(--oxblood); background: none; border: none; cursor: pointer;
   text-decoration: underline; text-underline-offset: .2em; padding: 0;
 }
 .resultline button.clear:hover { color: var(--verdigris-deep); }
-.resultline[hidden] { display: none; }
 
-/* ---- The feed: an asymmetric board of clippings ------------------------- */
-.feed {
-  list-style: none; padding: 0;
-  display: grid;
-  /* minmax(0,1fr) — NOT 1fr — so tracks can shrink below content and never
-     blow the grid (and the page) wider than the viewport on small screens. */
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(1rem, 2.2vw, 1.8rem);
-  align-items: start;
-  grid-auto-flow: row dense; /* let small clippings backfill the gaps */
+/* ---- The feed: a plain, even index of entries --------------------------- */
+.feed { list-style: none; padding: 0; display: block; }
+
+.entry {
+  padding: clamp(1.7rem, 4vw, 2.4rem) 0;
+  border-top: 1px solid var(--edge);
 }
 
-.card {
-  position: relative;
-  grid-column: span 6;
-  background: var(--bone-hi);
-  border: 1px solid var(--edge);
-  border-radius: 3px;
-  padding: clamp(1.2rem, 2.5vw, 1.9rem);
-  box-shadow: var(--shadow-card);
-  overflow-wrap: break-word;
+.entry-meta {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
+  gap: .3rem 1rem;
+  font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: .7rem;
+}
+.entry-type { color: var(--oxblood); }
+.entry-date { color: var(--ink-faint); white-space: nowrap; }
+
+.entry-title {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(1.4rem, 1.2rem + 1vw, 1.95rem);
+  line-height: 1.12; letter-spacing: -0.01em; margin-bottom: .4rem;
+}
+.entry-title a { color: var(--ink); text-decoration: none; }
+.entry-title a:hover {
+  color: var(--oxblood);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--oxblood) 30%, transparent);
 }
 
-.card .kind {
-  position: absolute; top: -0.7rem; right: 1rem;
-  font-family: var(--mono); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
-  background: var(--ink); color: var(--bone); padding: .28em .6em; border-radius: 2px;
-}
-.card .kind[data-kind="journal"] { background: var(--verdigris-deep); }
-.card .kind[data-kind="story"]   { background: var(--oxblood); }
-.card .kind[data-kind="fragment"]{ background: var(--ochre); color: var(--ink); }
-
-.card .card-date {
-  font-family: var(--mono); font-size: .7rem; letter-spacing: .1em;
-  color: var(--ink-faint); text-transform: uppercase;
-}
-.card h2 {
-  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
-  margin: .35rem 0 .1rem; line-height: 1.02;
-  font-variation-settings: "SOFT" 20, "opsz" 40;
-}
-.card h2 a { color: var(--oxblood); text-decoration: none; }
-.card h2 a::after { content: ""; position: absolute; inset: 0; } /* whole card clickable */
-.card:hover h2 a { color: var(--verdigris-deep); }
-.card:hover { border-color: var(--verdigris); }
-
-.card .dek {
-  font-family: var(--serif); font-style: italic; color: var(--ink-soft);
-  font-size: 1.02rem; margin: .3rem 0 .6rem; line-height: 1.35;
-}
-.card .excerpt { font-size: .95rem; color: var(--ink); margin-bottom: .9rem; }
-.card .card-tags { display: flex; flex-wrap: wrap; gap: .4rem; position: relative; z-index: 2; }
-
-/* a scribbled marginal note clipped to some cards */
-.card .marginal {
-  font-family: var(--mono); font-size: .68rem; color: var(--verdigris-deep);
-  line-height: 1.5; margin-top: .9rem; padding-top: .7rem;
-  border-top: 1px dashed var(--edge); position: relative; z-index: 2;
-}
-
-/* Optional non-entry quote cards, pinned between entries (data in entries.js). */
-.scrap {
-  grid-column: span 6;
-  align-self: stretch;
-  font-family: var(--serif); font-style: italic;
-  color: var(--ink-soft); background: transparent;
-  border: 1px dashed color-mix(in srgb, var(--verdigris) 55%, transparent);
-  border-radius: 3px; padding: 1.3rem 1.2rem;
-  font-size: 1.05rem; line-height: 1.5; position: relative;
-}
-.scrap cite {
-  display: block; margin-top: .7rem; font-style: normal;
-  font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--ink-faint);
-}
+.entry-dek { color: var(--ink-soft); font-size: 1rem; margin-bottom: .5rem; max-width: 54ch; }
+.entry-excerpt { color: var(--ink-faint); font-size: .92rem; margin-bottom: .85rem; max-width: 66ch; }
+.entry-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
 
 .feed .empty {
-  grid-column: 1 / -1; text-align: left; padding: 1.5rem 0;
+  padding: 2rem 0; border-top: 1px solid var(--edge);
   font-family: var(--mono); font-size: .8rem; letter-spacing: .04em; color: var(--ink-faint);
-}
-.feed .empty span { display:block; font-family: var(--mono); font-style: normal;
-  font-size: .74rem; letter-spacing: .1em; color: var(--ink-faint); margin-top: .6rem; }
-
-/* ---- Feed size choreography (asymmetry) --------------------------------
-   Cards get column spans by weight; a rotation seed gives the pinned-clipping
-   tilt. Layout only — no animation. */
-@media (min-width: 40rem) {
-  .card, .scrap { grid-column: span 3; }
-  .card.w-wide  { grid-column: span 4; }
-  .card.w-tall  { grid-column: span 2; }
-  .card.w-feature { grid-column: span 6; }
-  .card.w-feature h2 { font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); }
-  .card.w-feature .excerpt { max-width: 52ch; }
-  .scrap.s-wide { grid-column: span 4; }
-}
-@media (min-width: 64rem) {
-  .card.w-feature { grid-column: span 4; }
-  .card.w-feature.first { grid-column: span 6; }
 }
 
 /* =========================================================================
-   4. THE LEAF  (an entry) — the reading room
-   Deliberately calm. The measure is protected; ornament lives in the margins.
+   4. THE LEAF (an entry) — the reading room
    ========================================================================= */
 
-/* Persistent way home — a slim sticky ledger bar on every entry page */
+/* A slim, persistent way home on every entry page */
 .ledger {
   position: sticky; top: 0; z-index: 20;
-  background: color-mix(in srgb, var(--bone) 88%, transparent);
+  background: color-mix(in srgb, var(--bone) 90%, transparent);
   backdrop-filter: saturate(120%) blur(6px);
   border-bottom: 1px solid var(--edge);
 }
 .ledger .row {
-  max-width: 74rem; margin-inline: auto; padding: .55rem var(--page-pad);
+  max-width: var(--column); margin-inline: auto; padding: .6rem var(--page-pad);
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
 }
 .ledger .home {
-  font-family: var(--mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
   color: var(--oxblood); text-decoration: none; display: inline-flex; align-items: center; gap: .5em;
 }
 .ledger .home:hover { color: var(--verdigris-deep); }
-.ledger .home .arrow { transition: transform .18s ease; }
-.ledger .home:hover .arrow { transform: translateX(-3px); }
 .ledger .mark {
-  font-family: var(--serif); font-weight: 600; font-size: 1rem; letter-spacing: .01em;
-  color: var(--ink); text-decoration: none; font-variation-settings: "SOFT" 40, "WONK" 1;
+  font-family: var(--serif); font-weight: 500; font-size: 1rem;
+  color: var(--ink); text-decoration: none;
 }
 .ledger .mark:hover { color: var(--oxblood); }
 
 .leaf {
-  max-width: 74rem; margin-inline: auto;
-  padding: clamp(1.6rem,4vw,3rem) var(--page-pad) 2rem;
-  --note-col: 13rem; --note-gap: clamp(1.4rem, 3vw, 2.4rem);
+  max-width: var(--column); margin-inline: auto;
+  padding: clamp(2rem, 6vw, 3.5rem) var(--page-pad) 3rem;
 }
-/* Header + prose share the same left-aligned measure so everything lines up;
-   on wide screens the notes float out into the right gutter beside their text. */
 .leaf article > .eyebrow,
 .leaf article > h1,
 .leaf article > .dek,
@@ -363,196 +256,121 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.08;
 .leaf .prose,
 .leaf .endmatter { max-width: var(--measure); }
 
-/* Once there's room for the gutter, center the whole (text + notes) group so
-   the reading column sits in a balanced field rather than hugging the left. */
-@media (min-width: 68rem) {
-  .leaf article {
-    max-width: calc(var(--measure) + var(--note-col) + var(--note-gap));
-    margin-inline: auto;
-  }
-}
-
 .leaf .eyebrow {
-  font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: .3rem 1rem; align-items: center;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: .3rem .8rem; align-items: center;
+  margin-bottom: .9rem;
 }
 .leaf .eyebrow .dot { color: var(--edge); }
 .leaf .eyebrow .kind-tag { color: var(--oxblood); }
 
 .leaf h1 {
-  font-size: clamp(2.2rem, 1.5rem + 4vw, 4rem);
-  margin: .5rem 0 .3rem; line-height: 1.02; color: var(--ink);
-  font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 144;
-  letter-spacing: -0.015em;
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 1.4rem + 2.4vw, 3rem);
+  line-height: 1.05; color: var(--ink); letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 90;
+  margin-bottom: .5rem;
 }
 .leaf h1 em { font-style: italic; color: var(--oxblood); }
 .leaf .dek {
-  font-family: var(--serif); font-style: italic;
-  font-size: clamp(1.15rem, 1rem + 1vw, 1.6rem); color: var(--oxblood-soft);
-  line-height: 1.3; margin-bottom: 1.2rem;
+  color: var(--ink-soft); font-size: 1.12rem; line-height: 1.4;
+  margin-bottom: 1.4rem; max-width: 54ch;
 }
-.leaf .byline { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.6rem; }
+.leaf .byline { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem; }
 
-.leaf .prose { font-size: clamp(1.05rem, 1rem + 0.35vw, 1.2rem); }
-.leaf .prose > p { margin-bottom: 1.25em; }
-.leaf .prose > p + p { text-indent: 0; }
-
-/* drop cap — a single handmade flourish that does not harm readability */
-.leaf .prose > p.lede::first-letter,
-.leaf .prose > p.dropcap::first-letter {
-  font-family: var(--serif); font-weight: 600;
-  font-size: 3.9em; line-height: .72; float: left;
-  padding: .06em .12em 0 0; margin-top: .06em;
-  color: var(--oxblood); font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 144;
-}
-.leaf .prose > p.lede { text-indent: 0; }
+.leaf .prose { font-size: clamp(1.02rem, 0.98rem + 0.3vw, 1.15rem); }
+.leaf .prose > p { margin-bottom: 1.3em; }
 
 .leaf .prose h2 {
-  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); margin: 2rem 0 .6rem; color: var(--oxblood-deep);
+  font-size: clamp(1.4rem, 1.2rem + 1vw, 1.8rem); margin: 2rem 0 .6rem; color: var(--ink);
 }
-.leaf .prose h3 { font-size: 1.25rem; margin: 1.6rem 0 .4rem; color: var(--ink); }
+.leaf .prose h3 { font-size: 1.2rem; margin: 1.6rem 0 .4rem; color: var(--ink); }
 .leaf .prose a { font-weight: 500; }
 .leaf .prose em { font-style: italic; }
 .leaf .prose strong { font-weight: 600; }
 .leaf .prose blockquote {
-  border-left: 3px solid var(--verdigris); padding-left: 1.1rem; margin: 1.4rem 0;
-  font-family: var(--serif); font-style: italic; color: var(--ink-soft); font-size: 1.15em;
+  border-left: 2px solid var(--edge); padding-left: 1.1rem; margin: 1.4rem 0;
+  color: var(--ink-soft);
 }
-.leaf .prose ul, .leaf .prose ol { margin: 0 0 1.25em 1.3em; }
+.leaf .prose ul, .leaf .prose ol { margin: 0 0 1.3em 1.3em; }
 .leaf .prose li { margin-bottom: .4em; }
-.leaf .prose hr { border: none; }
 .leaf .prose code {
   font-family: var(--mono); font-size: .85em; background: var(--bone-lo);
   padding: .1em .4em; border-radius: 3px;
 }
 
-/* Pull quote — large, breaks the measure deliberately, marked .full */
-.leaf .pullquote {
-  font-family: var(--serif); font-style: italic; font-weight: 500;
-  font-size: clamp(1.5rem, 1.2rem + 2vw, 2.4rem); line-height: 1.18;
-  color: var(--oxblood); text-align: center;
-  margin: 2rem auto; padding: 1rem 0; max-width: 24ch;
-  border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge);
-}
-
-/* Figures — embedded images with captions, on-palette framing */
-.leaf figure { margin: 1.8rem 0; }
-.leaf figure img {
-  width: 100%; border: 1px solid var(--edge); border-radius: 2px;
-  background: var(--bone-hi); padding: .5rem;
-}
-.leaf figure figcaption {
-  font-family: var(--mono); font-size: .72rem; color: var(--ink-faint);
-  margin-top: .6rem; line-height: 1.5; letter-spacing: .02em;
-}
-.leaf figure figcaption b { color: var(--oxblood); font-weight: 600; }
-.leaf figure.full img { padding: .8rem; }
-
-/* Margin notes — the marginalia of the reading room. In the right column on
-   wide screens, an inset aside on narrow ones. Never interrupts the measure. */
+/* A margin note — kept as a quiet inset, never louder than the text. */
 .leaf .prose .note {
-  font-family: var(--mono); font-size: .76rem; line-height: 1.6;
-  color: var(--verdigris-deep);
-  border-left: 2px solid var(--verdigris); padding-left: .8rem;
-  margin: 1rem 0; max-width: 40ch;
-}
-.leaf .prose .note b { color: var(--oxblood); font-weight: 600; }
-@media (min-width: 68rem) {
-  /* Tufte-style sidenote: floats into the right gutter, top-aligned to the
-     paragraph it follows, without stealing width from the reading measure. */
-  .leaf .prose .note {
-    float: right; clear: right;
-    width: var(--note-col);
-    margin: .25em calc(-1 * (var(--note-col) + var(--note-gap))) 1rem 0;
-    border-left: none; padding-left: 0;
-    color: var(--ink-soft); border-top: 1px solid var(--edge); padding-top: .5rem;
-  }
-  .leaf .prose .note::before { content: "\2014 "; color: var(--verdigris); }
-  /* let deliberately-wide media bleed into the gutter */
-  .leaf figure.full, .leaf .pullquote.full {
-    width: calc(var(--measure) + var(--note-col) + var(--note-gap));
-    max-width: none;
-  }
+  font-family: var(--mono); font-size: .8rem; line-height: 1.6;
+  color: var(--ink-soft); border-left: 2px solid var(--edge); padding-left: .9rem;
+  margin: 1.4rem 0; max-width: 46ch;
 }
 
-/* End matter of an entry: filing + wayfinding, injected by js/entry.js */
-.leaf .endmatter { margin-top: 2.6rem; padding-top: 1.4rem; border-top: 1.5px solid var(--ink); }
+/* A pulled quote — plain, no rules or centering. */
+.leaf .prose .pullquote {
+  font-family: var(--serif); font-size: clamp(1.3rem, 1.1rem + 1vw, 1.6rem);
+  line-height: 1.3; color: var(--ink); margin: 1.8rem 0; max-width: 30ch;
+}
+
+/* End matter: filed-under tags + newer/older, injected by js/entry.js */
+.leaf .endmatter { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--ink); }
 .leaf .endmatter .filed-under {
-  font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
   color: var(--ink-faint); margin-bottom: .7rem;
 }
 .leaf .endmatter .filed-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem; }
 .leaf .endmatter .filed-tags a { text-decoration: none; }
 
-.leaf .shelfnav {
-  display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1rem;
-}
-@media (min-width: 44rem) { .leaf .shelfnav { grid-template-columns: 1fr 1fr; } }
-.leaf .shelfnav a {
-  display: block; text-decoration: none; padding: 1rem 1.1rem;
-  background: var(--bone-hi); border: 1px solid var(--edge); border-radius: 3px;
+.leaf .shelfnav { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1rem; }
+@media (min-width: 40rem) { .leaf .shelfnav { grid-template-columns: 1fr 1fr; } }
+.leaf .shelfnav a,
+.leaf .shelfnav .disabled {
+  display: block; text-decoration: none; padding: .9rem 1rem;
+  border: 1px solid var(--edge); border-radius: 2px;
 }
 .leaf .shelfnav a:hover { border-color: var(--verdigris); }
-.leaf .shelfnav a .dir {
-  font-family: var(--mono); font-size: .66rem; letter-spacing: .18em; text-transform: uppercase;
+.leaf .shelfnav .dir {
+  font-family: var(--mono); font-size: .64rem; letter-spacing: .18em; text-transform: uppercase;
   color: var(--ink-faint);
 }
-.leaf .shelfnav a .t { font-family: var(--serif); color: var(--oxblood); font-size: 1.15rem; display: block; margin-top: .25rem; line-height: 1.1;}
-.leaf .shelfnav a.next { text-align: right; }
-.leaf .shelfnav a.disabled { opacity: .35; pointer-events: none; }
+.leaf .shelfnav .t {
+  font-family: var(--serif); color: var(--ink); font-size: 1.05rem;
+  display: block; margin-top: .25rem; line-height: 1.15;
+}
+.leaf .shelfnav a:hover .t { color: var(--oxblood); }
+.leaf .shelfnav .next { text-align: right; }
+.leaf .shelfnav .disabled { opacity: .4; pointer-events: none; }
 
 .leaf .return {
   display: inline-flex; align-items: center; gap: .5em; margin-top: 2rem;
-  font-family: var(--mono); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
   color: var(--oxblood); text-decoration: none;
 }
 .leaf .return:hover { color: var(--verdigris-deep); }
 
 /* =========================================================================
-   5. Footer / colophon (shared)
+   5. Footer (shared)
    ========================================================================= */
 .colophon {
-  max-width: 78rem; margin: 4rem auto 0; padding: 2rem var(--page-pad) 3rem;
-  border-top: 1.5px solid var(--ink);
-  display: grid; gap: 1.4rem;
-  font-family: var(--mono); font-size: .74rem; line-height: 1.7; color: var(--ink-soft);
+  max-width: var(--column); margin: 4rem auto 0; padding: 2rem var(--page-pad) 3rem;
+  border-top: 1px solid var(--ink);
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-soft);
 }
-@media (min-width: 48rem) {
-  .colophon { grid-template-columns: 1.4fr 1fr auto; align-items: start; }
+.colophon .to-top a {
+  color: var(--oxblood); text-decoration: none;
+  text-transform: uppercase; letter-spacing: .14em; font-size: .7rem;
 }
-.colophon h2 { font-family: var(--serif); font-size: 1.2rem; color: var(--oxblood); margin-bottom: .3rem; }
-.colophon a { color: var(--oxblood); }
-.colophon .swatches { display: flex; gap: .4rem; }
-.colophon .swatches i {
-  width: 1.3rem; height: 1.3rem; border-radius: 50%; border: 1px solid var(--edge); display: block;
-}
-.colophon .to-top { justify-self: start; }
-@media (min-width: 48rem){ .colophon .to-top { justify-self: end; } }
-.colophon .to-top a { text-decoration: none; text-transform: uppercase; letter-spacing: .1em; font-size: .72rem; }
+.colophon .to-top a:hover { color: var(--verdigris-deep); }
 
 /* =========================================================================
-   6. Motion — opt-in reveals only when the reader welcomes motion
+   6. Motion — the page stays still; only scrolling eases.
    ========================================================================= */
-@media (prefers-reduced-motion: no-preference) {
-  .card { transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-  .card:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -22px rgba(33,29,38,.6); }
-  .card.w-feature:hover { transform: translateY(-3px); }
-
-  .reveal { opacity: 0; transform: translateY(10px); }
-  .reveal.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s ease; }
-
-  .tag, .shelfnav a, .ledger .home .arrow { transition: all .18s ease; }
-}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  /* nothing hides; everything is immediately visible and still */
-  .reveal { opacity: 1 !important; transform: none !important; }
 }
 
-/* Print: just the words, please. */
+/* Print: just the words. */
 @media print {
-  body::before, .ledger, .apparatus, .colophon, .shelfnav, .card .marginal { display: none; }
+  .ledger, .apparatus, .colophon, .shelfnav { display: none; }
   body { background: #fff; }
-  .leaf article { display: block; }
-  .leaf .prose .note { transform: none; }
 }

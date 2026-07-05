@@ -1,19 +1,13 @@
 /* =========================================================================
-   main.js — the index desk: render the feed, search it, filter it by tag.
-   No dependencies. Reads window.JOURNAL_ENTRIES and JOURNAL_MARGINALIA.
+   main.js — the index: render the feed, search it, filter it by tag.
+   No dependencies. Reads window.JOURNAL_ENTRIES.
    ========================================================================= */
 (function () {
   "use strict";
 
   var ENTRIES = window.JOURNAL_ENTRIES || [];
-  var SCRAPS  = window.JOURNAL_MARGINALIA || [];
-
-  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  var KIND_LABEL  = { story: "Story", journal: "Journal", fragment: "Fragment" };
-  var KIND_ACCENT = { story: "var(--oxblood)", journal: "var(--verdigris)", fragment: "var(--ochre)" };
-  var WEIGHT_CLASS = { feature: "w-feature", wide: "w-wide", tall: "w-tall" };
 
   // ---- tiny helpers ------------------------------------------------------
   function el(id){ return document.getElementById(id); }
@@ -27,8 +21,12 @@
     if (p.length < 3) return iso;
     return parseInt(p[2],10) + " " + MONTHS[parseInt(p[1],10)-1] + " " + p[0];
   }
+  // An entry's type is a free label — story, review, opinion, fragment, …
+  // Shown verbatim (CSS handles the uppercasing). "kind" is read as a legacy
+  // fallback so older entries keep working.
+  function typeLabel(e){ return e.type || e.kind || "entry"; }
   function haystack(e){
-    return (e.title + " " + (e.dek||"") + " " + (e.excerpt||"") + " " +
+    return (e.title + " " + typeLabel(e) + " " + (e.dek||"") + " " + (e.excerpt||"") + " " +
             (e.tags||[]).join(" ") + " " + (e.text||"")).toLowerCase();
   }
 
@@ -72,31 +70,25 @@
     });
   }
 
-  // ---- card markup -------------------------------------------------------
-  function cardHTML(e, i){
-    var wcls = WEIGHT_CLASS[e.weight] || "";
-    var first = (i === 0 && e.weight === "feature") ? " first" : "";
-    var accent = KIND_ACCENT[e.kind] || "var(--oxblood)";
+  // ---- entry markup ------------------------------------------------------
+  function entryHTML(e){
     var tags = (e.tags||[]).map(function(t){
       return '<a class="tag" href="?tag=' + encodeURIComponent(t) + '" data-tag="' + esc(t) + '">' + esc(t) + '</a>';
     }).join("");
-    return '<li class="card reveal ' + wcls + first + '" style="--card-accent:' + accent + '">' +
-      '<span class="kind" data-kind="' + esc(e.kind) + '">' + esc(KIND_LABEL[e.kind]||e.kind) + '</span>' +
-      '<div class="card-date">' + esc(fmtDate(e.date)) + '</div>' +
-      '<h2><a href="' + esc(e.slug) + '">' + esc(e.title) + '</a></h2>' +
-      (e.dek ? '<p class="dek">' + esc(e.dek) + '</p>' : '') +
-      (e.excerpt ? '<p class="excerpt">' + esc(e.excerpt) + '</p>' : '') +
-      '<div class="card-tags">' + tags + '</div>' +
-      (e.marginal ? '<div class="marginal">' + esc(e.marginal) + '</div>' : '') +
+    return '<li class="entry">' +
+      '<div class="entry-meta">' +
+        '<span class="entry-type">' + esc(typeLabel(e)) + '</span>' +
+        '<span class="entry-date">' + esc(fmtDate(e.date)) + '</span>' +
+      '</div>' +
+      '<h3 class="entry-title"><a href="' + esc(e.slug) + '">' + esc(e.title) + '</a></h3>' +
+      (e.dek ? '<p class="entry-dek">' + esc(e.dek) + '</p>' : '') +
+      (e.excerpt ? '<p class="entry-excerpt">' + esc(e.excerpt) + '</p>' : '') +
+      (tags ? '<div class="entry-tags">' + tags + '</div>' : '') +
     '</li>';
-  }
-  function scrapHTML(s){
-    return '<li class="scrap reveal' + (s.wide ? ' s-wide' : '') + '">' +
-      esc(s.text) + (s.cite ? '<cite>' + esc(s.cite) + '</cite>' : '') + '</li>';
   }
 
   // ---- render ------------------------------------------------------------
-  function render(animate){
+  function render(){
     var list = filtered();
     var feed = el("feed");
     var active = !!(state.q || state.tag);
@@ -105,15 +97,7 @@
       var msg = ENTRIES.length ? "No matching entries." : "No entries yet.";
       feed.innerHTML = '<li class="empty">' + msg + '</li>';
     } else {
-      var html = "";
-      // Interleave decorative scraps only when browsing unfiltered.
-      var scrapAt = active ? [] : [2, 5];  // after these card indices
-      var si = 0;
-      list.forEach(function(e, i){
-        html += cardHTML(e, i);
-        if (scrapAt.indexOf(i) !== -1 && SCRAPS[si]) { html += scrapHTML(SCRAPS[si++]); }
-      });
-      feed.innerHTML = html;
+      feed.innerHTML = list.map(entryHTML).join("");
     }
 
     // result line
@@ -123,19 +107,6 @@
       el("resultsummary").textContent = list.length + (list.length === 1 ? " entry" : " entries");
     } else {
       rl.hidden = true;
-    }
-
-    // reveal choreography
-    var cards = feed.querySelectorAll(".reveal");
-    if (reduceMotion || !animate){
-      cards.forEach(function(c){ c.classList.add("in"); });
-    } else if ("IntersectionObserver" in window){
-      var io = new IntersectionObserver(function(ents){
-        ents.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
-      }, { rootMargin: "0px 0px -8% 0px" });
-      cards.forEach(function(c, idx){ c.style.transitionDelay = Math.min(idx*40, 240) + "ms"; io.observe(c); });
-    } else {
-      cards.forEach(function(c){ c.classList.add("in"); });
     }
 
     renderTagbar();
@@ -158,7 +129,7 @@
   // ---- wiring ------------------------------------------------------------
   function setTag(t){
     state.tag = (state.tag === t) ? "" : t;
-    writeURL(); render(false);
+    writeURL(); render();
     document.querySelector(".apparatus").scrollIntoView({ block: "nearest" });
   }
 
@@ -173,7 +144,7 @@
       box.value = state.q;
       box.addEventListener("input", function(){
         state.q = box.value.trim();
-        writeURL(); render(false);
+        writeURL(); render();
       });
     }
 
@@ -185,13 +156,13 @@
         ev.preventDefault();
         state.q = ""; state.tag = "";
         if (box) box.value = "";
-        writeURL(); render(false);
+        writeURL(); render();
       }
     });
 
-    window.addEventListener("popstate", function(){ readURL(); if (box) box.value = state.q; render(false); });
+    window.addEventListener("popstate", function(){ readURL(); if (box) box.value = state.q; render(); });
 
-    render(true);
+    render();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

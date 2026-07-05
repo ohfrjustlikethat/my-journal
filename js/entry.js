@@ -23,6 +23,10 @@
 
   if (document.title === "" || /^\s*$/.test(document.title)) document.title = e.title + " · angry sheep";
 
+  // The entry-type label in the eyebrow is driven by the entry's own field.
+  var typeEl = document.getElementById("entrytype");
+  if (typeEl && (e.type || e.kind)) typeEl.textContent = (e.type || e.kind);
+
   var tags = (e.tags||[]).map(function(t){
     return '<a class="tag" href="../index.html?tag=' + encodeURIComponent(t) + '">' + esc(t) + '</a>';
   }).join("");
@@ -37,8 +41,8 @@
     '<p class="filed-under">Tags</p>' +
     '<div class="filed-tags">' + tags + '</div>' +
     '<nav class="shelfnav" aria-label="More entries">' +
-      nav(newer, "← Newer", "prev") +
-      nav(older, "Older →", "next") +
+      nav(newer, "← newer", "prev") +
+      nav(older, "older →", "next") +
     '</nav>' +
-    '<a class="return" href="../index.html">← Return to the index</a>';
+    '<a class="return" href="../index.html">← index</a>';
 })();

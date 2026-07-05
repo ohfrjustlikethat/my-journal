@@ -21,7 +21,7 @@
   <!-- persistent way home, on every entry page -->
   <div class="ledger">
     <div class="row">
-      <a class="home" href="../index.html"><span class="arrow">←</span> The Index</a>
+      <a class="home" href="../index.html"><span class="arrow">←</span> index</a>
       <a class="mark" href="../index.html">angry sheep</a>
     </div>
   </div>
@@ -29,7 +29,9 @@
   <div class="leaf">
     <article id="story">
       <p class="eyebrow">
-        <span class="kind-tag">Story</span><span class="dot">·</span>
+        <!-- id="entrytype" so entry.js keeps this in sync with the entry's
+             "type" field in js/entries.js. Set it to the same word here. -->
+        <span class="kind-tag" id="entrytype">[ type ]</span><span class="dot">·</span>
         <span>[ 2026-01-01 ]</span><span class="dot">·</span>
         <span>[ N ] min read</span>
       </p>
@@ -40,24 +42,15 @@
       </p>
 
       <div class="prose">
-        <p class="lede">[ first paragraph — this one gets the drop cap ]</p>
+        <p>[ first paragraph ]</p>
 
         <p>[ more paragraphs ]</p>
 
         <!-- Optional building blocks — uncomment and use as needed:
 
-        <aside class="note">[ a margin note; floats into the gutter on wide screens ]</aside>
-
-        <figure>
-          <img src="../assets/images/your-image.jpg" alt="[ describe the image ]">
-          <figcaption>[ optional caption ]</figcaption>
-        </figure>
-
+        <aside class="note">[ a quiet margin note ]</aside>
         <p class="pullquote">[ a pulled quote ]</p>
-
         <blockquote>[ a block quotation ]</blockquote>
-
-        <div class="asterism" aria-hidden="true"></div>  scene break
         -->
       </div>
 
