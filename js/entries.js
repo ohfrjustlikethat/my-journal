@@ -13,18 +13,17 @@
    ========================================================================= */
 
 window.JOURNAL_ENTRIES = [
-  // Empty — ready for your writing. Example shape:
-  // {
-  //   slug: "entries/my-first-story.html",
-  //   title: "My First Story",
-  //   date: "2026-07-05",
-  //   kind: "story",
-  //   weight: null,
-  //   tags: ["night"],
-  //   dek: "",
-  //   excerpt: "",
-  //   text: ""
-  // }
+  {
+    slug: "entries/minty-lips.html",
+    title: "minty lips",
+    date: "2026-07-05",
+    kind: "story",
+    weight: null,
+    tags: ["fiction", "fantasy", "godhood"],
+    dek: "when i feel invincible she helps me come down",
+    excerpt: "tonight i fucked a family friend. she says she's too old for me we only have an age difference of 6 years.",
+    text: "tonight i fucked a family friend. she says she's too old for me we only have an age difference of 6 years. i've only seen ever her as someone that knows how to take care of me when i eventually need something. that's who i am, and that's who she says she is. sometimes i see myself as a god and that terrifies me, because if god resembled me in anyway then the world would be either heaven or a complete hellscape. i guess you could say me fucking her was her way of comforting me. she tells me how i matter, and then i feel like i've never mattered to anyone other than her. i think these thoughts of godhood are foolish but the alternative is death, it's accepting what she says i'm not. i am either all encompassing knowledge of the earth or im the dullness that destroys men. how do i tell jianna this without sounding like a cynical bullshitter? she seems to be a true believer of the religion that demands obedience. i can see now how her eyes would employ a new form that would burn at the back of my head cutting me off from the only friend i have, even though she would never abandon me. she would want me sitting on her bed playing with her cigarette and weed smelling hair, and then i'd tell her and she would get up from my chest and she would look at me like i needed help, but all i would see is her breasts covered with her hair. her form would look like a caramel coloured goddess lit by the orange sunset. so i kiss her and i forget what could never happen."
+  }
 ];
 
 // Optional pull-quotes pinned between entries on the index. Left empty on
