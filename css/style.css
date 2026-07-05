@@ -22,7 +22,8 @@
   --bone-lo:   #E3DBC9;  /* sunk paper: code, wells                 */
   --edge:      #D2C8B3;  /* hairline borders                        */
   --ink-soft:  #4C4750;  /* secondary text                         */
-  --ink-faint: #7C7680;  /* tertiary / metadata                     */
+  --ink-faint: #645F68;  /* tertiary / metadata — darkened to ~5:1
+                            on bone so small faint text stays legible */
   --oxblood-deep: #5C2020;
   --oxblood-soft: #9C4B45;
   --verdigris-deep: #37564E; /* AA-safe teal for small type        */
@@ -185,9 +186,14 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.1; 
 .feed { list-style: none; padding: 0; display: block; }
 
 .entry {
+  position: relative;
   padding: clamp(1.7rem, 4vw, 2.4rem) 0;
   border-top: 1px solid var(--edge);
+  transition: background-color .15s ease;
 }
+/* The whole entry reads as one quiet target: a faint warm lift on hover,
+   and the title link stretched over the card so a click anywhere opens it. */
+.entry:hover { background-color: var(--bone-hi); }
 
 .entry-meta {
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
@@ -195,7 +201,14 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.1; 
   font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
   margin-bottom: .7rem;
 }
-.entry-type { color: var(--oxblood); }
+/* The entry type as a small filled badge in the corner of the card. One
+   treatment for every type — story, review, opinion, … — driven by the
+   entry's own "type" field (see js/entries.js), shown verbatim. */
+.entry-type {
+  font-size: .62rem; letter-spacing: .18em;
+  background: var(--oxblood); color: var(--bone-hi);
+  padding: .28em .6em .32em; border-radius: 2px;
+}
 .entry-date { color: var(--ink-faint); white-space: nowrap; }
 
 .entry-title {
@@ -204,7 +217,10 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.1; 
   line-height: 1.12; letter-spacing: -0.01em; margin-bottom: .4rem;
 }
 .entry-title a { color: var(--ink); text-decoration: none; }
-.entry-title a:hover {
+/* Stretched hit area: covers the card without changing any layout. */
+.entry-title a::after { content: ""; position: absolute; inset: 0; }
+.entry-title a:hover,
+.entry:hover .entry-title a {
   color: var(--oxblood);
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--oxblood) 30%, transparent);
@@ -212,7 +228,8 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 500; line-height: 1.1; 
 
 .entry-dek { color: var(--ink-soft); font-size: 1rem; margin-bottom: .5rem; max-width: 54ch; }
 .entry-excerpt { color: var(--ink-faint); font-size: .92rem; margin-bottom: .85rem; max-width: 66ch; }
-.entry-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+/* Tags sit above the stretched title link so they stay independently clickable. */
+.entry-tags { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .4rem; }
 
 .feed .empty {
   padding: 2rem 0; border-top: 1px solid var(--edge);
